@@ -9,6 +9,7 @@ import androidx.lifecycle.lifecycleScope
 import com.android.apphelper2.utils.HandlerUtil
 import com.android.apphelper2.utils.SocketUtil
 import com.android.apphelper2.utils.ToastUtil
+import com.android.apphelper2.utils.zmq.ZmqUtil2
 import com.android.apphelper2.utils.zmq.ZmqUtil6
 import com.android.convert.databinding.ActivityMainBinding
 import kotlinx.coroutines.Dispatchers
@@ -25,9 +26,6 @@ class MainActivity : AppCompatActivity() {
     private val mHandler: HandlerUtil by lazy {
         return@lazy HandlerUtil()
     }
-    private val mZmqUtil: ZmqUtil6.Result by lazy {
-        return@lazy ZmqUtil6.Result()
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,6 +34,8 @@ class MainActivity : AppCompatActivity() {
         mBinding = ActivityMainBinding.inflate(layoutInflater, null, false)
 
         setContentView(mBinding.root)
+
+        ZmqUtil2.initLog(this)
 
         initData()
     }
@@ -50,9 +50,9 @@ class MainActivity : AppCompatActivity() {
                     mBinding.tvResult.text = split[1]
                 } else if (msg.what == 200) {
                     val obj = msg.obj as String
-                    val split = obj.split("|")
-                    mBinding.tvZmqSend.text = split[0]
-                    mBinding.tvZmqResult.text = split[1]
+//                    val split = obj.split("|")
+//                    mBinding.tvZmqSend.text = split[0]
+                    mBinding.tvZmqResult.text = obj
                 }
             }
         })
@@ -69,14 +69,22 @@ class MainActivity : AppCompatActivity() {
             })
 
             // 接收zmq数据
-            mZmqUtil.setResultCallBackListener(object : ZmqUtil6.Result.ResultCallBackListener {
-                override fun onCall(send: String, result: String) {
-                    val message = mHandler.getMessage()
-                    message.what = 200
-                    message.obj = "$send|$result"
-                    mHandler.send(message)
-                }
-            })
+//            mZmqUtil.setResultCallBackListener(object : ZmqUtil6.Result.ResultCallBackListener {
+//                override fun onCall(send: String, result: String) {
+//                    val message = mHandler.getMessage()
+//                    message.what = 200
+//                    message.obj = "$send|$result"
+//                    mHandler.send(message)
+//                }
+//            })
+
+            ZmqUtil2.setCallBackListener {
+                val message = mHandler.getMessage()
+                message.what = 200
+                message.obj = it
+                mHandler.send(message)
+            }
+
         }
 
         // 初始化socket
@@ -109,8 +117,8 @@ class MainActivity : AppCompatActivity() {
                 ToastUtil.show("Ip is empty !")
                 return@setOnClickListener
             }
-            val tcp = "tcp://" + ip + ":" + ZmqUtil6.port
-            mZmqUtil.initResultZmq(tcp)
+            ZmqUtil2.IP_ADDRESS = ip
+            ZmqUtil2.start()
         }
     }
 }
