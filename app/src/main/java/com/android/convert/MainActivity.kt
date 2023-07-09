@@ -54,6 +54,7 @@ class MainActivity : AppCompatActivity() {
                 } else if (msg.what == 200) {
                     val obj = msg.obj as String
                     mBinding.tvZmqResult.text = obj
+                    mBinding.tvZmqSend.text = "数据接收中..."
                 }
             }
         })
