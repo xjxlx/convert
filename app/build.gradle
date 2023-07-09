@@ -1,0 +1,62 @@
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+}
+def configCompile = rootProject.ext.android
+
+android {
+    namespace 'com.android.convert'
+    compileSdk configCompile.compileSdkVersion
+
+    defaultConfig {
+        applicationId "com.android.convert"
+        minSdk configCompile.minSdkVersion
+        targetSdk configCompile.targetSdkVersion
+        versionCode configCompile.versionCode
+        versionName configCompile.versionName
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+
+    buildFeatures {
+        viewBinding = true
+    }
+}
+
+dependencies {
+
+    implementation 'androidx.appcompat:appcompat:1.3.1'
+    implementation 'com.google.android.material:material:1.4.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation project(path: ':apphelper2')
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+
+    //协程依赖 - 基础
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4"
+    // 协程 - activity / fragment 扩展
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.4.1'
+    // 协程 - viewModel 扩展
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.1'
+
+    // 反射
+    implementation 'androidx.activity:activity-ktx:1.3.0'
+    implementation 'androidx.fragment:fragment-ktx:1.3.0'
+
+    implementation 'org.zeromq:jeromq:0.5.3'
+}
