@@ -2,11 +2,14 @@ package com.android.convert
 
 import android.os.Bundle
 import android.os.Message
+import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.android.apphelper2.utils.HandlerUtil
 import com.android.apphelper2.utils.SocketUtil
 import com.android.convert.databinding.ActivityMainBinding
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -22,6 +25,8 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+
         mBinding = ActivityMainBinding.inflate(layoutInflater, null, false)
 
         setContentView(mBinding.root)
@@ -56,10 +61,17 @@ class MainActivity : AppCompatActivity() {
             mSocketUtil.initSocketService()
         }
 
+        mBinding.btnClose.setOnClickListener {
+            mSocketUtil.stop()
+        }
+
         mBinding.btnSend.setOnClickListener {
-            lifecycleScope.launch {
+            lifecycleScope.launch(Dispatchers.IO) {
                 repeat(Int.MAX_VALUE) {
-                    mSocketUtil.sendServerData("服务端-->发送-->$it")
+                    val sendServerData = mSocketUtil.sendServerData("服务端-->发送-->$it")
+                    if (!sendServerData) {
+                        cancel()
+                    }
                     delay(200)
                 }
             }

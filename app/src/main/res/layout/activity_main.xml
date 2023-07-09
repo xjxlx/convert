@@ -5,21 +5,37 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <Button
-        android:id="@+id/btn_init_socket"
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:id="@+id/ll_control"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
         android:layout_marginTop="@dimen/dp_10"
-        android:text="初始化Server端Socket" />
+        android:orientation="horizontal"
+        android:paddingHorizontal="@dimen/dp_20">
+
+        <Button
+            android:id="@+id/btn_init_socket"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:text="初始化Server" />
+
+        <Button
+            android:id="@+id/btn_close"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:text="关闭" />
+
+    </RelativeLayout>
 
     <Button
+        android:layout_below="@+id/ll_control"
         android:id="@+id/btn_send"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/btn_init_socket"
+        android:layout_marginTop="@dimen/dp_20"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="@dimen/dp_10"
         android:text="发送" />
 
     <LinearLayout
