@@ -87,7 +87,7 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launch {
             ZmqUtil2.setConnectionLostListener {
                 mBinding.tvZmqSend.post {
-                    mBinding.tvZmqSend.text = "ZMQ  发送端数据丢失了，请尽快检查！"
+                    mBinding.tvZmqSend.text = "ZMQ发送端数据异常，请尽快检查！"
                 }
             }
         }
