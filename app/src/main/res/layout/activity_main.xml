@@ -24,7 +24,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
-                android:text="初始化Server" />
+                android:text="手动初始化Socket" />
 
             <Button
                 android:id="@+id/btn_close"
@@ -42,7 +42,7 @@
             android:layout_below="@+id/ll_control"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="@dimen/dp_20"
-            android:text="发送" />
+            android:text="Server发送" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -109,7 +109,8 @@
                 android:hint="发送的数据"
                 android:paddingStart="@dimen/dp_16"
                 android:textColor="@color/black"
-                android:textSize="@dimen/sp_18" />
+                android:textSize="@dimen/sp_18"
+                tools:ignore="RtlSymmetry" />
 
             <View
                 android:layout_width="1dp"

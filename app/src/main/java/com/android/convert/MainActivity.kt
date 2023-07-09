@@ -83,6 +83,16 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        lifecycleScope.launch {
+            ZmqUtil2.setConnectionLostListener {
+                mBinding.tvZmqSend.post {
+                    mBinding.tvZmqSend.text = "ZMQ  发送端数据丢失了，请尽快检查！"
+                }
+            }
+        }
+
+
+        mSocketUtil.initSocketService()
         // 初始化socket
         mBinding.btnInitSocket.setOnClickListener {
             mSocketUtil.initSocketService()
@@ -113,7 +123,7 @@ class MainActivity : AppCompatActivity() {
                 mNetWorkUtil.getIPAddress {
                     if (!TextUtils.isEmpty(it)) {
                         ip = it
-                        mBinding.tvIp.text = it
+                        mBinding.tvIp.text = "当前的ip:$it"
                     }
                     if (TextUtils.isEmpty(ip)) {
                         ToastUtil.show("Ip is empty !")
@@ -124,5 +134,10 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mSocketUtil.stop()
     }
 }
