@@ -30,8 +30,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initData() {
-        val message = mHandler.getMessage()
-
         mHandler.setHandlerCallBackListener(object : HandlerUtil.HandlerMessageListener {
             override fun handleMessage(msg: Message) {
                 if (msg.what == 100) {
@@ -46,6 +44,7 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launch {
             mSocketUtil.setServiceCallBackListener(object : SocketUtil.SocketService.ServerCallBackListener {
                 override fun callBack(send: String, result: String) {
+                    val message = mHandler.getMessage()
                     message.what = 100
                     message.obj = "$send|$result"
                     mHandler.send(message)
