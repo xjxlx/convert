@@ -1,0 +1,4 @@
+
+[submodule "apphelper2"]
+	path = apphelper2
+	url = git@github.com:xjxlx/apphelper2.git
