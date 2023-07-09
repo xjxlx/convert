@@ -10,7 +10,6 @@ import com.android.apphelper2.utils.HandlerUtil
 import com.android.apphelper2.utils.SocketUtil
 import com.android.apphelper2.utils.ToastUtil
 import com.android.apphelper2.utils.zmq.ZmqUtil2
-import com.android.apphelper2.utils.zmq.ZmqUtil6
 import com.android.convert.databinding.ActivityMainBinding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
@@ -68,23 +67,18 @@ class MainActivity : AppCompatActivity() {
                 }
             })
 
-            // 接收zmq数据
-//            mZmqUtil.setResultCallBackListener(object : ZmqUtil6.Result.ResultCallBackListener {
-//                override fun onCall(send: String, result: String) {
-//                    val message = mHandler.getMessage()
-//                    message.what = 200
-//                    message.obj = "$send|$result"
-//                    mHandler.send(message)
-//                }
-//            })
+            // 接收zmq 数据
+            lifecycleScope.launch(Dispatchers.IO) {
+                ZmqUtil2.setCallBackListener {
+                    val message = mHandler.getMessage()
+                    message.what = 200
+                    message.obj = it
+                    mHandler.send(message)
 
-            ZmqUtil2.setCallBackListener {
-                val message = mHandler.getMessage()
-                message.what = 200
-                message.obj = it
-                mHandler.send(message)
+                    // 发送到 socket
+                    mSocketUtil.sendServerData(it)
+                }
             }
-
         }
 
         // 初始化socket
