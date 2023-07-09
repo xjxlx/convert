@@ -7,6 +7,7 @@ import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.android.apphelper2.utils.HandlerUtil
+import com.android.apphelper2.utils.NetworkUtil
 import com.android.apphelper2.utils.SocketUtil
 import com.android.apphelper2.utils.ToastUtil
 import com.android.apphelper2.utils.zmq.ZmqUtil2
@@ -24,6 +25,9 @@ class MainActivity : AppCompatActivity() {
     }
     private val mHandler: HandlerUtil by lazy {
         return@lazy HandlerUtil()
+    }
+    private val mNetWorkUtil: NetworkUtil by lazy {
+        return@lazy NetworkUtil.instance.register()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,8 +53,6 @@ class MainActivity : AppCompatActivity() {
                     mBinding.tvResult.text = split[1]
                 } else if (msg.what == 200) {
                     val obj = msg.obj as String
-//                    val split = obj.split("|")
-//                    mBinding.tvZmqSend.text = split[0]
                     mBinding.tvZmqResult.text = obj
                 }
             }
@@ -106,13 +108,21 @@ class MainActivity : AppCompatActivity() {
 
         // 初始化zmq
         mBinding.btnReceiver.setOnClickListener {
-            val ip = mBinding.tvIp.text.toString()
-            if (TextUtils.isEmpty(ip)) {
-                ToastUtil.show("Ip is empty !")
-                return@setOnClickListener
+            lifecycleScope.launch {
+                var ip = ""
+                mNetWorkUtil.getIPAddress {
+                    if (!TextUtils.isEmpty(it)) {
+                        ip = it
+                        mBinding.tvIp.text = it
+                    }
+                    if (TextUtils.isEmpty(ip)) {
+                        ToastUtil.show("Ip is empty !")
+                        return@getIPAddress
+                    }
+                    ZmqUtil2.IP_ADDRESS = ip
+                    ZmqUtil2.start()
+                }
             }
-            ZmqUtil2.IP_ADDRESS = ip
-            ZmqUtil2.start()
         }
     }
 }

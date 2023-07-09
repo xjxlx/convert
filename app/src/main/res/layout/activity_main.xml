@@ -80,13 +80,12 @@
         android:layout_weight="1.3"
         android:orientation="vertical">
 
-        <EditText
+        <TextView
             android:id="@+id/tv_ip"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="请输入绑定的IP:"
-            android:text="192.168.124.24"
-            android:textSize="@dimen/sp_28" />
+            android:hint="当前的ip:"
+            android:textSize="@dimen/sp_18" />
 
         <Button
             android:id="@+id/btn_receiver"
