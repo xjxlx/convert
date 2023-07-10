@@ -1,17 +1,18 @@
 package com.android.convert
 
+import android.Manifest
 import android.os.Bundle
 import android.os.Message
 import android.text.TextUtils
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import com.android.apphelper2.utils.HandlerUtil
-import com.android.apphelper2.utils.NetworkUtil
-import com.android.apphelper2.utils.SocketUtil
-import com.android.apphelper2.utils.ToastUtil
+import com.android.apphelper2.utils.*
+import com.android.apphelper2.utils.permission.PermissionMultipleCallBackListener
+import com.android.apphelper2.utils.permission.PermissionUtil
 import com.android.apphelper2.utils.zmq.ZmqUtil2
 import com.android.convert.databinding.ActivityMainBinding
+import com.android.keeplife.account.LifecycleManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
@@ -29,6 +30,7 @@ class MainActivity : AppCompatActivity() {
     private val mNetWorkUtil: NetworkUtil by lazy {
         return@lazy NetworkUtil.instance.register()
     }
+    private val permissionUtil = PermissionUtil.PermissionActivity(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,6 +46,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initData() {
+        initKeepLife()
+
         mHandler.setHandlerCallBackListener(object : HandlerUtil.HandlerMessageListener {
             override fun handleMessage(msg: Message) {
                 if (msg.what == 100) {
@@ -139,6 +143,19 @@ class MainActivity : AppCompatActivity() {
                 ZmqUtil2.start()
             }
         }
+    }
+
+    private fun initKeepLife() {
+        permissionUtil.requestArray(
+            arrayOf(Manifest.permission.GET_ACCOUNTS, Manifest.permission.WRITE_SYNC_SETTINGS, Manifest.permission.FOREGROUND_SERVICE),
+            object : PermissionMultipleCallBackListener {
+                override fun onCallBack(allGranted: Boolean, map: MutableMap<String, Boolean>) {
+                    LifecycleManager.instance.paddingActivity(this@MainActivity.packageName,
+                        FileUtil.instance.getCanonicalNamePath(this@MainActivity::class.java))
+                    LifecycleManager.instance.startLifecycle(this@MainActivity)
+                    ToastUtil.show("开启保活服务")
+                }
+            })
     }
 
     override fun onDestroy() {
