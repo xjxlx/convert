@@ -137,8 +137,8 @@ class MainActivity : AppCompatActivity() {
         mBinding.btnCheckIp.setOnClickListener {
             lifecycleScope.launch {
                 mNetWorkUtil.getIPAddress {
-                    mBinding.tvIp.text = "当前的ip:$it"
-                    mBinding.etIp.setText(it)
+                    mBinding.tvIp.text = "当前的ip:${it.ip} name:${it.ssid}"
+                    mBinding.etIp.setText(it.ip)
                 }
             }
         }
