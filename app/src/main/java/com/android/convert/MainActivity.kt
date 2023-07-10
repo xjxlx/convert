@@ -122,6 +122,7 @@ class MainActivity : AppCompatActivity() {
             lifecycleScope.launch {
                 mNetWorkUtil.getIPAddress {
                     mBinding.tvIp.text = "当前的ip:$it"
+                    mBinding.etIp.setText(it)
                 }
             }
         }
