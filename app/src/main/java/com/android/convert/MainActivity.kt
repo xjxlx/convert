@@ -48,6 +48,7 @@ class MainActivity : AppCompatActivity() {
     private fun initData() {
         initKeepLife()
 
+        // handler 数据的展示
         mHandler.setHandlerCallBackListener(object : HandlerUtil.HandlerMessageListener {
             override fun handleMessage(msg: Message) {
                 if (msg.what == 100) {
@@ -88,6 +89,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        // zmq 数据断联的监听
         lifecycleScope.launch {
             ZmqUtil2.setConnectionLostListener {
                 mBinding.tvZmqSend.post {
@@ -96,6 +98,16 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        // zmq 操作的监听
+        lifecycleScope.launch(Dispatchers.IO) {
+            ZmqUtil2.setTraceListener(object : ZmqUtil2.TraceListener {
+                override fun trace(content: String) {
+                    mBinding.tvZmqSend.post {
+                        mBinding.tvZmqSend.text = content
+                    }
+                }
+            })
+        }
 
         mSocketUtil.initSocketService()
         // 初始化socket

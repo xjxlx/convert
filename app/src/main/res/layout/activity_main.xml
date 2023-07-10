@@ -130,12 +130,12 @@
                 android:id="@+id/tv_zmq_send"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/dp_20"
+                android:layout_marginTop="@dimen/dp_10"
                 android:layout_weight="1"
                 android:hint="发送的数据"
                 android:paddingStart="@dimen/dp_16"
                 android:textColor="@color/black"
-                android:textSize="@dimen/sp_18"
+                android:textSize="@dimen/sp_12"
                 tools:ignore="RtlSymmetry" />
 
             <View
@@ -147,7 +147,7 @@
                 android:id="@+id/tv_zmq_result"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/dp_20"
+                android:layout_marginTop="@dimen/dp_10"
                 android:layout_weight="1"
                 android:hint="接受的数据"
                 android:paddingStart="@dimen/dp_16"
