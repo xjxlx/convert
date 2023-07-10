@@ -16,6 +16,19 @@ android {
         versionName configCompile.versionName
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        /*账号类型,为了保持唯一，一般使用applicationId*/
+        resValue "string", "account_type", applicationId
+        /*账号authorities，为了保持唯一，一般使用applicationId*/
+        resValue "string", "account_authority", applicationId
+        /*当前应用的名字，会显示在注册列表中，大标题*/
+        resValue "string", "account_name", "应用保活"
+        /*当前应用的密码,可以设置实际的值，但是不会显示出来*/
+        resValue "string", "account_password", "19900713op"
+        /*当前应用列表中的小标题，在大标题的下方，会显示出来*/
+        resValue "string", "account_label", "应用保活"
+        /*账号同步页面的说明*/
+        resValue "string", "account_sync_provider_label", "同步账号"
     }
 
     buildTypes {
@@ -43,6 +56,7 @@ dependencies {
     implementation 'com.google.android.material:material:1.4.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation project(path: ':apphelper2')
+    implementation project(path: ':keeplife')
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
