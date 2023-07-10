@@ -117,22 +117,25 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        // 检查ip
+        mBinding.btnCheckIp.setOnClickListener {
+            lifecycleScope.launch {
+                mNetWorkUtil.getIPAddress {
+                    mBinding.tvIp.text = "当前的ip:$it"
+                }
+            }
+        }
+
         // 初始化zmq
         mBinding.btnReceiver.setOnClickListener {
             lifecycleScope.launch {
-                var ip = ""
-                mNetWorkUtil.getIPAddress {
-                    if (!TextUtils.isEmpty(it)) {
-                        ip = it
-                        mBinding.tvIp.text = "当前的ip:$it"
-                    }
-                    if (TextUtils.isEmpty(ip)) {
-                        ToastUtil.show("Ip is empty !")
-                        return@getIPAddress
-                    }
-                    ZmqUtil2.IP_ADDRESS = ip
-                    ZmqUtil2.start()
+                val ip = mBinding.etIp.text.toString()
+                if (TextUtils.isEmpty(ip)) {
+                    ToastUtil.show("Ip is empty !")
+                    return@launch
                 }
+                ZmqUtil2.IP_ADDRESS = ip
+                ZmqUtil2.start()
             }
         }
     }
