@@ -7,9 +7,14 @@ import android.text.TextUtils
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import com.android.apphelper2.utils.*
+import com.android.apphelper2.utils.FileUtil
+import com.android.apphelper2.utils.HandlerUtil
+import com.android.apphelper2.utils.NetworkUtil
+import com.android.apphelper2.utils.ToastUtil
 import com.android.apphelper2.utils.permission.PermissionMultipleCallBackListener
 import com.android.apphelper2.utils.permission.PermissionUtil
+import com.android.apphelper2.utils.socket.SocketListener
+import com.android.apphelper2.utils.socket.SocketServerUtil
 import com.android.apphelper2.utils.zmq.ZmqUtil2
 import com.android.convert.databinding.ActivityMainBinding
 import com.android.keeplife.account.LifecycleManager
@@ -21,8 +26,8 @@ import kotlinx.coroutines.launch
 class MainActivity : AppCompatActivity() {
 
     private lateinit var mBinding: ActivityMainBinding
-    private val mSocketUtil: SocketUtil.SocketService by lazy {
-        return@lazy SocketUtil.SocketService()
+    private val mSocketUtil: SocketServerUtil by lazy {
+        return@lazy SocketServerUtil()
     }
     private val mHandler: HandlerUtil by lazy {
         return@lazy HandlerUtil()
@@ -51,26 +56,39 @@ class MainActivity : AppCompatActivity() {
         // handler 数据的展示
         mHandler.setHandlerCallBackListener(object : HandlerUtil.HandlerMessageListener {
             override fun handleMessage(msg: Message) {
-                if (msg.what == 100) {
-                    val obj = msg.obj as String
-                    val split = obj.split("|")
-                    mBinding.tvSend.text = split[0]
-                    mBinding.tvResult.text = split[1]
-                } else if (msg.what == 200) {
-                    val obj = msg.obj as String
-                    mBinding.tvZmqResult.text = obj
-                    mBinding.tvZmqSend.text = "数据接收中..."
+                val content = msg.obj as String
+                when (msg.what) {
+                    100 -> {
+                        mBinding.tvSend.text = content
+                    }
+                    101 -> {
+                        mBinding.tvResult.text = content
+                    }
+
+                    200 -> {
+                        mBinding.tvZmqSend.text = "数据接收中..."
+                        mBinding.tvZmqResult.text = content
+                    }
                 }
             }
         })
 
         lifecycleScope.launch {
             // 接收sock数据
-            mSocketUtil.setServiceCallBackListener(object : SocketUtil.SocketService.ServerCallBackListener {
-                override fun callBack(send: String, result: String) {
+            mSocketUtil.setTraceListener(object : SocketListener {
+                override fun callBackListener(content: String) {
                     val message = mHandler.getMessage()
                     message.what = 100
-                    message.obj = "$send|$result"
+                    message.obj = content
+                    mHandler.send(message)
+                }
+            })
+
+            mSocketUtil.setResultListener(object : SocketListener {
+                override fun callBackListener(content: String) {
+                    val message = mHandler.getMessage()
+                    message.what = 101
+                    message.obj = content
                     mHandler.send(message)
                 }
             })
@@ -84,7 +102,10 @@ class MainActivity : AppCompatActivity() {
                     mHandler.send(message)
 
                     // 发送到 socket
-                    mSocketUtil.sendServerData(it)
+//                    val send = mSocketUtil.send(it)
+//                    if (send) {
+//                        cancel()
+//                    }
                 }
             }
         }
@@ -124,8 +145,8 @@ class MainActivity : AppCompatActivity() {
         mBinding.btnSend.setOnClickListener {
             lifecycleScope.launch(Dispatchers.IO) {
                 repeat(Int.MAX_VALUE) {
-                    val sendServerData = mSocketUtil.sendServerData("服务端-->发送-->$it")
-                    if (!sendServerData) {
+                    val send = mSocketUtil.send("服务端-->发送-->$it")
+                    if (!send) {
                         cancel()
                     }
                     delay(200)
@@ -151,7 +172,7 @@ class MainActivity : AppCompatActivity() {
                     ToastUtil.show("Ip is empty !")
                     return@launch
                 }
-                ZmqUtil2.IP_ADDRESS = ip
+                ZmqUtil2.IP_ADDRESS = "*"
                 ZmqUtil2.start()
             }
         }

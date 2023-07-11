@@ -135,7 +135,7 @@
                 android:hint="发送的数据"
                 android:paddingStart="@dimen/dp_16"
                 android:textColor="@color/black"
-                android:textSize="@dimen/sp_12"
+                android:textSize="@dimen/sp_15"
                 tools:ignore="RtlSymmetry" />
 
             <View
@@ -152,7 +152,7 @@
                 android:hint="接受的数据"
                 android:paddingStart="@dimen/dp_16"
                 android:textColor="@color/black"
-                android:textSize="@dimen/sp_18" />
+                android:textSize="@dimen/sp_15" />
         </LinearLayout>
 
     </LinearLayout>
